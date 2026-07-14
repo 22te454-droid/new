@@ -1,0 +1,16 @@
+<svg width="60" height="100" viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- 剑柄 -->
+  <rect x="24" y="70" width="12" height="25" fill="#1a1a2e" stroke="#0f3460" stroke-width="1"/>
+  <!-- 剑柄头 -->
+  <circle cx="30" cy="98" r="4" fill="#0f3460"/>
+  <!-- 剑身 -->
+  <rect x="26" y="10" width="8" height="60" fill="#00d4ff" stroke="#0099cc" stroke-width="1"/>
+  <!-- 剑身高光 -->
+  <rect x="27" y="15" width="2" height="50" fill="#66e6ff" opacity="0.8"/>
+  <!-- 额外的光晕 -->
+  <rect x="25" y="20" width="10" height="40" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+  <!-- 剑尖 -->
+  <polygon points="30,10 26,0 34,0" fill="#00d4ff" stroke="#0099cc" stroke-width="1"/>
+  <!-- 护手 -->
+  <rect x="20" y="68" width="20" height="4" fill="#0099cc" stroke="#006699" stroke-width="1" rx="2"/>
+</svg>

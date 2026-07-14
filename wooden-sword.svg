@@ -1,0 +1,12 @@
+<svg width="60" height="100" viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- 剑柄 -->
+  <rect x="24" y="70" width="12" height="25" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+  <!-- 剑柄头 -->
+  <circle cx="30" cy="98" r="4" fill="#654321"/>
+  <!-- 剑身 -->
+  <rect x="26" y="10" width="8" height="60" fill="#D4A574" stroke="#8B4513" stroke-width="1"/>
+  <!-- 剑尖 -->
+  <polygon points="30,10 26,0 34,0" fill="#D4A574" stroke="#8B4513" stroke-width="1"/>
+  <!-- 护手 -->
+  <rect x="20" y="68" width="20" height="4" fill="#8B4513" stroke="#654321" stroke-width="1" rx="2"/>
+</svg>
