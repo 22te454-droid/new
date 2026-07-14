@@ -1,0 +1,103 @@
+/* ============================================
+   全局样式 - 根元素和基础元素
+   ============================================ */
+
+:root {
+  /* 字体设置 */
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* 尺寸 */
+  height: 100%;
+  width: 100%;
+
+  /* 颜色 */
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  /* 渲染优化 */
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   链接样式
+   ============================================ */
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+  transition: color 0.25s;
+}
+
+a:hover {
+  color: #535bf2;
+}
+
+/* ============================================
+   主体样式
+   ============================================ */
+
+body {
+  margin: 0;
+  min-width: 320px;
+  height: 100vh;
+}
+
+/* ============================================
+   标题样式
+   ============================================ */
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+/* ============================================
+   按钮样式
+   ============================================ */
+
+button {
+  padding: 0.6em 1.2em;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+button:hover {
+  border-color: #646cff;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* ============================================
+   浅色主题媒体查询
+   ============================================ */
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+
+  a:hover {
+    color: #747bff;
+  }
+
+  button {
+    background-color: #f9f9f9;
+  }
+}
