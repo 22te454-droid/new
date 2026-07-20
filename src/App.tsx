@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import { EASY_QUESTIONS, NORMAL_QUESTIONS, HARD_QUESTIONS } from './questions'
 
 interface Warrior {
   level: number
@@ -88,7 +89,10 @@ interface Question {
 interface MultipleChoiceQuestion extends Question {
   type: 'multiple'
   japanese: string
-  meaning: string
+  meaning: {
+    zh: string
+    en: string
+  }
   romanji: string
   options: string[]
   correct: number
@@ -96,104 +100,19 @@ interface MultipleChoiceQuestion extends Question {
 
 interface PhraseOrderQuestion extends Question {
   type: 'phrase_order'
-  meaning: string
+  meaning: {
+    zh: string
+    en: string
+  }
   phrase: string[]
   correctOrder: number[]
 }
-
-const EASY_QUESTIONS: (MultipleChoiceQuestion | PhraseOrderQuestion)[] = [
-  { id: 1, type: 'multiple', japanese: 'ありがとう', meaning: '感謝を表す言葉', romanji: 'arigatou', options: ['ありがとう', 'ごめんなさい', 'こんにちは', 'さようなら'], correct: 0 },
-  { id: 2, type: 'multiple', japanese: 'おはよう', meaning: '朝の挨拶', romanji: 'ohayou', options: ['こんばんは', 'おはよう', 'おやすみ', 'ありがとう'], correct: 1 },
-  { id: 3, type: 'multiple', japanese: 'こんにちは', meaning: '日中の挨拶', romanji: 'konnichiwa', options: ['さようなら', 'こんにちは', 'ありがとう', 'おはよう'], correct: 1 },
-  { id: 4, type: 'multiple', japanese: 'さようなら', meaning: '別れの挨拶', romanji: 'sayounara', options: ['こんにちは', 'さようなら', 'おはよう', 'おやすみ'], correct: 1 },
-  { id: 5, type: 'multiple', japanese: 'はい', meaning: '肯定の返事', romanji: 'hai', options: ['いいえ', 'はい', 'たぶん', 'どうぞ'], correct: 1 },
-  { id: 6, type: 'multiple', japanese: 'いいえ', meaning: '否定の返事', romanji: 'iie', options: ['はい', 'いいえ', 'どうぞ', 'ありがとう'], correct: 1 },
-  { id: 7, type: 'multiple', japanese: 'みず', meaning: '飲み物（水）', romanji: 'mizu', options: ['みず', 'ぎゅうにゅう', 'おちゃ', 'ジュース'], correct: 0 },
-  { id: 8, type: 'multiple', japanese: 'ごはん', meaning: 'ご飯（食べ物）', romanji: 'gohan', options: ['ぱん', 'ごはん', 'さかな', 'にく'], correct: 1 },
-  { id: 9, type: 'multiple', japanese: 'ねこ', meaning: '動物（猫）', romanji: 'neko', options: ['いぬ', 'ねこ', 'とり', 'うま'], correct: 1 },
-  { id: 10, type: 'multiple', japanese: 'コンピューター', meaning: 'カタカナ：computer', romanji: 'konpyuutaa', options: ['コンピューター', 'テレビ', 'スマホ', 'ラジオ'], correct: 0 },
-  { id: 11, type: 'multiple', japanese: '日', meaning: '「ひ/にち」日・日付', romanji: 'nichi/hi', options: ['日 (ひ)', '月 (つき)', '木 (き)', '水 (みず)'], correct: 0 },
-  { id: 12, type: 'multiple', japanese: '月', meaning: '「つき/げつ」月・月曜日', romanji: 'tsuki/getsu', options: ['金', '土', '月', '火'], correct: 2 },
-  { id: 13, type: 'multiple', japanese: '私は学校＿行きます。', meaning: '適切な助詞を選ぶ', romanji: 'watashi wa gakkou _ ikimasu', options: ['を', 'で', 'に', 'と'], correct: 2 },
-  { id: 14, type: 'multiple', japanese: 'りんご＿食べます。', meaning: '目的語の助詞', romanji: 'ringo _ tabemasu', options: ['は', 'が', 'を', 'に'], correct: 2 },
-  { id: 15, type: 'multiple', japanese: '行きます（dictionary）', meaning: 'ます形→辞書形', romanji: 'ikimasu→iku', options: ['いく', 'くる', 'みる', 'する'], correct: 0 },
-  { id: 16, type: 'multiple', japanese: '食べます（dictionary）', meaning: 'ます形→辞書形', romanji: 'tabemasu→taberu', options: ['のむ', 'たべる', 'はなす', 'あるく'], correct: 1 },
-  { id: 17, type: 'phrase_order', meaning: '我吃饭。', phrase: ['私は', 'ご飯を', '食べます'], correctOrder: [0, 1, 2] },
-  { id: 18, type: 'phrase_order', meaning: '早上好。', phrase: ['おはよう', 'ございます'], correctOrder: [0, 1] },
-  { id: 19, type: 'multiple', japanese: 'アイスクリーム', meaning: 'カタカナ：ice cream', romanji: 'aisukuriimu', options: ['あいす', 'アイスクリーム', 'せいとう', 'みず'], correct: 1 },
-  { id: 20, type: 'multiple', japanese: '高い', meaning: '値段が高い/背が高い', romanji: 'takai', options: ['高い', '安い', '早い', '遅い'], correct: 0 },
-  { id: 21, type: 'multiple', japanese: '安い', meaning: '値段が安い', romanji: 'yasui', options: ['高い', '安い', '多い', '少ない'], correct: 1 },
-  { id: 22, type: 'multiple', japanese: '上', meaning: '上/うえ', romanji: 'ue', options: ['下', '前', '上', '後ろ'], correct: 2 },
-  { id: 23, type: 'multiple', japanese: '下', meaning: '下/した', romanji: 'shita', options: ['上', '下', '中', '右'], correct: 1 },
-  { id: 24, type: 'multiple', japanese: 'これは何ですか？', meaning: '物の名前を尋ねる', romanji: 'kore wa nan desu ka', options: ['あれはだれですか', 'これは何ですか', 'どこですか', 'いつですか'], correct: 1 },
-  { id: 25, type: 'phrase_order', meaning: '明天我会去图书馆。', phrase: ['明日', '図書館に', '行きます'], correctOrder: [0, 1, 2] },
-  { id: 26, type: 'phrase_order', meaning: '请给我水。', phrase: ['水を', 'ください'], correctOrder: [0, 1] },
-  { id: 27, type: 'multiple', japanese: '赤い (あかい)', meaning: '色：赤', romanji: 'akai', options: ['赤い', '青い', '白い', '黒い'], correct: 0 },
-  { id: 28, type: 'multiple', japanese: '青い (あおい)', meaning: '色：青', romanji: 'aoi', options: ['黄色い', '青い', '赤い', '緑の'], correct: 1 },
-  { id: 29, type: 'phrase_order', meaning: '初次见面，我是太郎。', phrase: ['はじめまして', '私は', '太郎です'], correctOrder: [0,1,2] },
-  { id: 30, type: 'multiple', japanese: 'ありがとうございました', meaning: '丁寧な感謝（過去）', romanji: 'arigatou gozaimashita', options: ['ありがとう', 'ありがとうございました', 'おはよう', 'さようなら'], correct: 1 }
-]
-
-const NORMAL_QUESTIONS: (MultipleChoiceQuestion | PhraseOrderQuestion)[] = [
-  // 中級：助詞・語彙・短文理解
-  { id: 101, type: 'multiple', japanese: '彼女＿本を読みます。', meaning: '適切な助詞を選ぶ（目的語）', romanji: 'kanojo _ hon o yomimasu', options: ['は', 'に', 'が', 'を'], correct: 3 },
-  { id: 102, type: 'multiple', japanese: '駅まで歩きます。', meaning: '「まで」の用法（終点）', romanji: 'eki made arukimasu', options: ['で', 'まで', 'を', 'と'], correct: 1 },
-  { id: 103, type: 'multiple', japanese: '昨日、映画を見ました。', meaning: '過去の表現', romanji: 'kinou eiga o mimashita', options: ['見ます', '見ました', '見る', '見ている'], correct: 1 },
-  { id: 104, type: 'multiple', japanese: '明日は雨が降るでしょう。', meaning: '推量表現', romanji: 'ashita ame ga furu deshou', options: ['確実', '推量', '否定', '命令'], correct: 1 },
-  { id: 105, type: 'multiple', japanese: '便利な', meaning: '使いやすい・便利', romanji: 'benri na', options: ['便利な', '高価な', '面白い', '難しい'], correct: 0 },
-  { id: 106, type: 'multiple', japanese: '～たい（例：行きたい）', meaning: '希望を表す', romanji: 'tai', options: ['可能', '否定', '希望', '命令'], correct: 2 },
-  { id: 107, type: 'multiple', japanese: '～てください（例：待ってください）', meaning: '依頼表現', romanji: 'te kudasai', options: ['命令', '依頼', '確認', '拒否'], correct: 1 },
-  { id: 108, type: 'multiple', japanese: '見ないでください', meaning: '否定依頼', romanji: 'minaide kudasai', options: ['見てください', '見ないでください', '見るな', '見ます'], correct: 1 },
-
-  // フレーズ並び替え（中級）
-  { id: 121, type: 'phrase_order', meaning: '我昨天和朋友看了电影。', phrase: ['私は', '昨日', '友達と', '映画を', '見ました'], correctOrder: [0,1,2,3,4] },
-  { id: 122, type: 'phrase_order', meaning: '妈妈正在做蛋糕。', phrase: ['母は', 'ケーキを', '作っています'], correctOrder: [0,1,2] },
-  { id: 123, type: 'phrase_order', meaning: '在图书馆学习。', phrase: ['図書館で', '勉強します'], correctOrder: [0,1] },
-
-  // 語彙（カタカナ語・日常語）
-  { id: 131, type: 'multiple', japanese: 'テレビ', meaning: '家電：TV', romanji: 'terebi', options: ['テレビ', 'ラジオ', '冷蔵庫', '洗濯機'], correct: 0 },
-  { id: 132, type: 'multiple', japanese: 'レストラン', meaning: '食事をする場所', romanji: 'resutoran', options: ['病院', '銀行', 'レストラン', '郵便局'], correct: 2 },
-
-  // 文法（比較・表現）
-  { id: 141, type: 'multiple', japanese: 'AはBより＿です。', meaning: '比較の基本', romanji: 'A wa B yori _ desu', options: ['よい', 'もっと', 'しか', 'とても'], correct: 0 },
-  { id: 142, type: 'multiple', japanese: '～なければなりません', meaning: '義務を表す', romanji: 'nakereba narimasen', options: ['可能', '義務', '希望', '提案'], correct: 1 },
-
-  // 中級応用の並び替え（丁寧表現）
-  { id: 151, type: 'phrase_order', meaning: '如果有时间，请帮忙。', phrase: ['もし', '時間が', 'あれば', '手伝って', 'ください'], correctOrder: [0,1,2,3,4] },
-  { id: 152, type: 'phrase_order', meaning: '他去过日本。', phrase: ['彼は', '日本へ', '行った', 'ことが', 'あります'], correctOrder: [0,1,2,3,4] }
-]
-
-
-
-const HARD_QUESTIONS: (MultipleChoiceQuestion | PhraseOrderQuestion)[] = [
-  // 上級：文法構造・敬語・分詞・複合文
-  { id: 201, type: 'multiple', japanese: '～ながら（例：音楽を聞きながら勉強する）', meaning: '動作を同時に行う表現', romanji: 'nagara', options: ['前後関係', '原因', '同時', '条件'], correct: 2 },
-  { id: 202, type: 'multiple', japanese: '～てしまう（例：忘れてしまった）', meaning: '後悔や完了を表す', romanji: 'te shimau', options: ['可能', '完了/後悔', '命令', '意志'], correct: 1 },
-  { id: 203, type: 'multiple', japanese: 'いらっしゃる', meaning: '来る/行く/いるの尊敬語', romanji: 'irassharu', options: ['普通語', '丁寧語', '尊敬語', '謙譲語'], correct: 2 },
-  { id: 204, type: 'multiple', japanese: '～たら（例：雨が降ったら）', meaning: '仮定条件の表現', romanji: 'tara', options: ['理由', '条件', '結果', '提案'], correct: 1 },
-  { id: 205, type: 'multiple', japanese: '可能形（例：行ける）', meaning: 'できる/可能', romanji: 'kanoukei', options: ['否定', '過去', '可能', '命令'], correct: 2 },
-  { id: 206, type: 'multiple', japanese: '受身（例：褒められる）', meaning: '受け身の表現', romanji: 'ukemi', options: ['自発', '可能', '受身', '使役'], correct: 2 },
-  { id: 207, type: 'multiple', japanese: '使役（例：食べさせる）', meaning: '誰かに～させる', romanji: 'shieki', options: ['受身', '使役', '命令', '依頼'], correct: 1 },
-  { id: 208, type: 'multiple', japanese: '～そうだ（伝聞）', meaning: '聞いた情報を伝える表現', romanji: 'sou da', options: ['意志', '伝聞', '推量', '命令'], correct: 1 },
-
-  // 上級フレーズ並び替え（複合文）
-  { id: 221, type: 'phrase_order', meaning: '如果下雨，比赛将取消。', phrase: ['もし', '雨が', '降ったら', '試合は', '中止に', 'なります'], correctOrder: [0,1,2,3,4,5] },
-  { id: 222, type: 'phrase_order', meaning: '如果他有时间，想更多地学习日语。', phrase: ['彼は', '時間が', 'あれば', '日本語を', 'もっと', '勉強したい'], correctOrder: [0,1,2,3,4,5] },
-
-  // 語彙と語法（上級単語）
-  { id: 231, type: 'multiple', japanese: '検討する', meaning: 'よく考えて判断する', romanji: 'kentou suru', options: ['検討する', '決定する', '報告する', '作成する'], correct: 0 },
-  { id: 232, type: 'multiple', japanese: '影響', meaning: '何かに及ぼす効果', romanji: 'eikyou', options: ['影響', '無視', '分離', '保持'], correct: 0 },
-
-  // 敬語表現（上級）
-  { id: 241, type: 'multiple', japanese: '伺います（うかがいます）', meaning: '行く/聞くの謙譲語', romanji: 'ukagaimasu', options: ['尊敬語', '謙譲語', '丁寧語', '普通語'], correct: 1 },
-  { id: 242, type: 'multiple', japanese: 'おっしゃる', meaning: '言う（尊敬語）', romanji: 'ossharu', options: ['謙譲語', '尊敬語', '丁寧語', '普通語'], correct: 1 }
-]
 
 const ENEMIES: { [key in Difficulty]: Enemy[] } = {
   easy: [
     {
       name: '史莱姆',
-      maxHp: 30,
+      maxHp: 180,
       attack: 5,
       defense: 0,
       image: 'assets/Enemies/Default/slime_normal_rest.png',
@@ -201,7 +120,7 @@ const ENEMIES: { [key in Difficulty]: Enemy[] } = {
     },
     {
       name: '小蛙',
-      maxHp: 35,
+      maxHp: 210,
       attack: 6,
       defense: 1,
       image: 'assets/Enemies/Default/frog_rest.png',
@@ -211,7 +130,7 @@ const ENEMIES: { [key in Difficulty]: Enemy[] } = {
   normal: [
     {
       name: '妖魔',
-      maxHp: 50,
+      maxHp: 300,
       attack: 12,
       defense: 3,
       image: 'assets/Enemies/Default/slime_normal_rest.png',
@@ -219,7 +138,7 @@ const ENEMIES: { [key in Difficulty]: Enemy[] } = {
     },
     {
       name: '骷髅骑士',
-      maxHp: 60,
+      maxHp: 360,
       attack: 14,
       defense: 4,
       image: 'assets/Enemies/Default/skeleton_idle.png',
@@ -229,7 +148,7 @@ const ENEMIES: { [key in Difficulty]: Enemy[] } = {
   hard: [
     {
       name: '恶魔统领',
-      maxHp: 100,
+      maxHp: 600,
       attack: 20,
       defense: 6,
       image: 'assets/Enemies/Default/slime_spike_rest.png',
@@ -237,7 +156,7 @@ const ENEMIES: { [key in Difficulty]: Enemy[] } = {
     },
     {
       name: '暗黑骑士',
-      maxHp: 90,
+      maxHp: 540,
       attack: 18,
       defense: 7,
       image: 'assets/Enemies/Default/worm_normal_rest.png',
@@ -471,7 +390,7 @@ function App() {
   const [purchasedEquipment, setPurchasedEquipment] = useState<string[]>([])
   const [phraseOrder, setPhraseOrder] = useState<number[]>([])
   const [selectedPhraseIndex, setSelectedPhraseIndex] = useState<number | null>(null)
-  const [learningMode, setLearningMode] = useState<'jp' | 'cn' | 'both'>('both')
+  const [learningMode, setLearningMode] = useState<'jp' | 'cn' | 'en' | 'both'>('both')
   const [displayOptions, setDisplayOptions] = useState<string[]>([])
   const [currentCorrectIndex, setCurrentCorrectIndex] = useState<number | null>(null)
   const [currentStreak, setCurrentStreak] = useState(0)
@@ -1058,7 +977,7 @@ function App() {
     setSelectedPhraseIndex(null)
   }
 
-  const questionModuleTitle = learningMode === 'cn' ? '中文学习' : learningMode === 'jp' ? '日语学习' : '中日双语学习'
+  const questionModuleTitle = learningMode === 'cn' ? '中文学习' : learningMode === 'jp' ? '日语学习' : learningMode === 'en' ? 'English Learning' : '中日双语学习'
   const questionTypeLabel = currentQuestion
     ? currentQuestion.type === 'phrase_order'
       ? '（排序题）'
@@ -1073,9 +992,23 @@ function App() {
 
   const questionSubtext = currentQuestion && currentQuestion.type === 'multiple'
     ? learningMode === 'both'
-      ? `日语: ${(currentQuestion as MultipleChoiceQuestion).japanese}`
+      ? `日语: ${(currentQuestion as MultipleChoiceQuestion).japanese} | 含义: ${(currentQuestion as MultipleChoiceQuestion).meaning.zh}`
       : learningMode === 'jp'
       ? `ローマ字: ${(currentQuestion as MultipleChoiceQuestion).romanji}`
+      : learningMode === 'cn'
+      ? `含义: ${(currentQuestion as MultipleChoiceQuestion).meaning.zh}`
+      : learningMode === 'en'
+      ? `Romanization: ${(currentQuestion as MultipleChoiceQuestion).romanji} | Meaning: ${(currentQuestion as MultipleChoiceQuestion).meaning.en}`
+      : ''
+    : currentQuestion && currentQuestion.type === 'phrase_order'
+    ? learningMode === 'both'
+      ? `含义: ${(currentQuestion as PhraseOrderQuestion).meaning.zh}`
+      : learningMode === 'cn'
+      ? `含义: ${(currentQuestion as PhraseOrderQuestion).meaning.zh}`
+      : learningMode === 'jp'
+      ? `Meaning: ${(currentQuestion as PhraseOrderQuestion).meaning.en}`
+      : learningMode === 'en'
+      ? `Meaning: ${(currentQuestion as PhraseOrderQuestion).meaning.en}`
       : ''
     : ''
 
@@ -1813,6 +1746,7 @@ function App() {
                               <div className="mode-selector">
                                 <button className={`mode-btn ${learningMode === 'cn' ? 'active' : ''}`} onClick={() => setLearningMode('cn')}>中文</button>
                                 <button className={`mode-btn ${learningMode === 'both' ? 'active' : ''}`} onClick={() => setLearningMode('both')}>双语</button>
+                                <button className={`mode-btn ${learningMode === 'en' ? 'active' : ''}`} onClick={() => setLearningMode('en')}>English</button>
                                 <button className={`mode-btn ${learningMode === 'jp' ? 'active' : ''}`} onClick={() => setLearningMode('jp')}>纯日语</button>
                               </div>
                               <span className="question-count">{questionsAnswered + 1} / 10</span>
